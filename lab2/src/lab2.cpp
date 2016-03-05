@@ -18,6 +18,7 @@ class student{
 	string name;
 	char* fname;
 	int sem;
+	int flag;
 	string branch;
 	string buffer;
 	fstream f1;
@@ -55,7 +56,7 @@ class student{
 	void write()
 		{
 			//cout<<"Enter the file name:";
-			cin>>fname;
+			//cin>>fname;
 			f1.open("file.txt",ios::out|ios::app);
 			f1<<buffer;
 			f1.close();
@@ -102,7 +103,8 @@ class student{
 	{
 		int *p;
 		string sem1;
-		int flag=0,pos;
+		int pos;
+		flag=0;
 		char buffer[101];
 		f1.open("file.txt",ios::in);
 		while(!f1.eof())
@@ -141,7 +143,8 @@ class student{
 };
 
 int main() {
-	int choice,flag=0;
+	int choice;
+	int flag=0;
 	string key;
 	student s;
 	while(1)
