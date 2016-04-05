@@ -17,11 +17,11 @@ class namedlist
 	public: string buffer,l1[100];
 			int i1;
 	public:
-		void load()
+		void load(char* fname)
 		{
 			i1=0;
 			fstream f1;
-			f1.open("file1.txt",ios::in);
+			f1.open(fname,ios::in);
 			while(!f1.eof())
 			{
 				getline(f1,buffer);
@@ -29,30 +29,11 @@ class namedlist
 				l1[i1++]=buffer;
 			}
 			cout<<"\nloaded file: \n";
-			for(int i=0;i<i1;i++)
+			for(int i=0;i<i1-1;i++)
 				cout<<l1[i]<<"\t";
-			cout<<"\n";
 			return;
 		}
 		
-		void loading()
-		{
-			i1=0;
-			fstream f1;
-			f1.open("file2.txt",ios::in);
-			while(!f1.eof())
-			{
-				getline(f1,buffer);
-				cout<<buffer;
-				l1[i1++]=buffer;
-			}
-			cout<<"\nloaded file: \n";
-			for(int i=0;i<i1;i++)
-				cout<<l1[i]<<"\t";
-			cout<<"\n";
-			return;
-		}
-
 		void sort(string *l,int n)
 		{
 			int i,j;
@@ -69,8 +50,8 @@ class namedlist
 					}
 				}
 			}
-			cout<<"\nsorted file: ";
-			for(i=0;i<n;i++)
+			cout<<"\nsorted file: \n"<<n;
+			for(i=1;i<n;i++)
 				cout<<l[i]<<"\t";
 			cout<<"\n";
 			return;
@@ -83,15 +64,15 @@ class namedlist
 			 cout<<l1[i];
 			for(i=0;i<i2;i++)
 			 cout<<l2[i]; */
-			cout<<i1<<" "<<i2;
-			for(i=1;i<i1;i++)
-			 cout<<"\npos "<<i<<"element: "<<l1[i];
-			for(i=1;i<i2;i++)
-			 cout<<"\npos "<<i<<"element: "<<l2[i];
-			i=1; j=1;
-			while(i<i1&&j<i2)
+			//cout<<i1<<" "<<i2;
+			//for(i=1;i<i1;i++)
+			 //cout<<"\npos "<<i<<"element: "<<l1[i];
+			//for(i=1;i<i2;i++)
+			// cout<<"\npos "<<i<<"element: "<<l2[i];
+			//i=1; j=1;
+			while((i<i1&&j<i2)&&((l1[i]!="\n")||(l2[j]!="\n")))
 			{		
-				cout<<"test";
+				//cout<<"test";
 				if(l1[i]<l2[j])
 					i++;
 				if(l1[i]==l2[j])
@@ -103,7 +84,7 @@ class namedlist
 				else
 					j++;
 			}
-			cout<<"\nNumber of strings matched: "<<count;
+			cout<<"Number of strings matched: "<<count<<"\n";
 			return;
 		}
 };
@@ -111,20 +92,20 @@ class namedlist
 int main()
 {
 	//cout<<"test";
-	//string fname1,fname2;
+	char fname1[100],fname2[100];
 	//fname1="file1.txt";
 	//fname2="file2.txt";
 	namedlist n1;
 	namedlist n2;
-	//cout<<"\nEnter the name of file1: ";
-	//cin>>fname1;
+	cout<<"\nEnter the name of file1: ";
+	cin>>fname1;
 	//cout<<"test";
-	n1.load();
+	n1.load(fname1);
 	//cout<<"test";
 	n1.sort(n1.l1,n1.i1);
-	//cout<<"\nEnter the name of file2: ";
-	//cin>>fname2;
-	n2.loading();
+	cout<<"\nEnter the name of file2: ";
+	cin>>fname2;
+	n2.load(fname2);
 	//cout<<"test";
 	n2.sort(n2.l1,n2.i1);
 	//cout<<"test";
