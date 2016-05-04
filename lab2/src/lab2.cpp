@@ -6,177 +6,186 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-#include <iostream>
+#include<iostream>
 #include<fstream>
 #include<sstream>
 #include<stdlib.h>
-#include<string>
+#include<string.h>
 using namespace std;
 
-class student{
-	public:string usn;
-	string name;
-	char* fname;
-	int sem;
-	int flag;
-	string branch;
-	string buffer;
-	fstream f1;
-
-	void pack()
-	{
-		string temp,sem1;
-		stringstream out;
-		out<<sem;
-		sem1=out.str();
-		temp.erase();
-		temp=usn+'|'+name+'|'+sem1+'|'+branch;
-		if(temp.length()<100)
-		{
-			for(int i=temp.length()+1;i<=100;i++)
-			{
-				temp+="$";
-			}
-		}
-		buffer+=temp;
-	}
-
-	void datain()
-	{
-			cout<<"Enter USN: ";
-			cin>>usn;
-			cout<<"Enter Name: ";
-			cin>>name;
-			cout<<"Enter Semester: ";
-			cin>>sem;
-			cout<<"Enter Branch: ";
-			cin>>branch;
-	}
-
-	void write()
-		{
-			//cout<<"Enter the file name:";
-			//cin>>fname;
-			f1.open("file.txt",ios::out|ios::app);
-			f1<<buffer;
-			f1.close();
-		}
-
-	int * unpack()
-	{
-		int i=0;
-		int *p = new int[4];
-		while(buffer[i]!='|')
-		{
-			usn=buffer[i];
-			i++;
-			p[0]=f1.tellp();
-		}
-		while(buffer[i]!='|')
-		{
-			name=buffer[i];
-			i++;
-			p[1]=f1.tellp();
-		}
-		while(buffer[i]!='|')
-		{
-			sem=buffer[i];
-			i++;
-			p[2]=f1.tellp();
-		}
-		while(buffer[i]!='$')
-		{
-			branch=buffer[i];
-			i++;
-			p[3]=f1.tellp();
-		}
-		return p;
-	}
-
-
-
-
-	void modify();
-	void del();
-
-	int search(string key)
-	{
-		int *p;
-		string sem1;
-		int pos;
-		flag=0;
-		char buffer[101];
-		f1.open("file.txt",ios::in);
-		while(!f1.eof())
-		{
-		  f1.read(buffer,100);
-		  pos=f1.tellp();
-		  p=unpack();
-		  if(key==usn)
-		  {
-			  flag=1;
-			  return p[0];
-		  }
-		  if(key==name)
-		  {
-			  flag=1;
-			  return p[1];
-		  }
-		  stringstream out;
-		  out<<sem;
-		  sem1=out.str();
-		  if(key==sem1) //convert sem to string
-		  {
-			  flag=1;
-			  return p[2];
-		  }
-		  if(key==branch)
-		  {
-			  flag=1;
-			  return p[3];
-		  }
-
-		}
-		return 0;
-	}
-
+class student
+{
+	public: int semester;
+		string buffer,usn,branch,name;
+			
+		void read();
+		void pack();
+		void write(char* fname);
+		int del(string key,char* fname);
+		int search(string key,char* fname);
+		void unpack();
+		void modify(string key,char* fname);
 };
 
-int main() {
-	int choice;
-	int flag=0;
-	string key;
-	student s;
-	while(1)
+void student::read()
+{
+	cout<<"USN: ";
+	cin>>usn;
+	cout<<"Name: ";
+	cin>>name;
+	cout<<"Branch: ";
+	cin>>branch;
+	cout<<"Semester: ";
+	cin>>semester;
+}
+
+void student::pack()
+{
+	string temp;
+	stringstream out;
+	out<<semester;
+	sem=out.str();
+	temp.erase();
+	temp=usn+'|'+name+'|'+branch+'|'+sem;
+	for(;temp.size()<100;)
 	{
-		cout<<"Enter 1.Insert 2.search 3.modify 4.Delete 5.Exit";
-		cin>>choice;
-		switch(choice)
+		temp+='$';
+	}
+	buffer.erase();
+	buffer=temp+'\n';
+}
+
+void student::write(char* fname)
+{
+	fstream f;
+	f.open(fname,ios::out|ios::app);
+	f<<buffer;
+	f.close();	
+}
+
+int student::del(string key,char* fname)
+{
+	fstream f;
+	char del_mark='*';
+	int pos=0,flag=0;
+	pos=search(key,fname);
+	if(pos)
+	{
+		f.open(fname);
+		pos-=101;
+		f.seekp(pos,ios::beg);
+		f.put(del_mark);
+		flag=1;
+	}
+	f.close();
+	if(flag==1)
+		return 1;
+	else
+		return 0;
+} 
+
+int student::search(string key,char* fname)
+{
+	fstream f;
+	int flag=0,pos=0;
+	f.open(fname,ios::in);
+	if(!f)
+	{
+		cout<<"File "<<fname<<" does not exist!\n";
+		exit(0);
+	}
+	while(!f.eof())
+	{
+		getline(f,buffer);
+		unpack();
+		if(key==usn)
 		{
-		case 1:s.datain();
-			   s.pack();
-			   s.write();
-			   break;
-
-		case 2:cout<<"\nEnter key to be searched for: ";
-				cin>>key;
-				flag=s.search(key);
-				if(flag==0)
-					cout<<"\nKey not found";
-				else
-					cout<<"\nKey found at "<<flag<<"\n";
-				break;
-
-		/*case 3:s.modify();
-			   break;
-		case 4:s.del();
-			   break; */
-
-		case 5:exit(0);
-				break;
-
-		default:cout<<"\nWrong input!";
+			flag=1;
+			cout<<"\nRecord found: "<<buffer;
+			pos=f.tellg();
+			cout<<" at position: "<<pos<<"\n";
+			f.close();
+			return pos;
 		}
+	}
+	f.close();
+	cout<<"\nRecord not found!";
+	return 0;
+} 
+
+void student::unpack()
+{
+	int i=0;
+	usn.erase();
+	while(buffer[i]!='|')
+		usn+=buffer[i++];
+}
+
+void student::modify(string key,char* fname)
+{
+	int choice,i;
+	i=del(key,fname);
+	if(i)
+	{
+		cout<<"\nEnter the modified record\n";
+	    cout<<"USN: ";
+		cin>>usn;
+		cout<<"Name: ";
+		cin>>name;
+		cout<<"Branch: ";
+		cin>>branch;				
+		cout<<"Semester: ";
+		cin>>semester;
+	}
+	buffer.erase();
+	pack();
+	write(fname);
+}
+ 
+
+int main()
+{
+	student s;
+	int choice,i;
+	string key;
+	char fname[100];
+	cout<<"\nEnter\n1.Insert record\n2.Delete record\n3.Modify record\n4.Search record\n";
+	cin>>choice;
+	switch(choice)				
+	{
+		case 1: cout<<"Enter the file name to insert values into: ";
+				cin>>fname;
+				s.read();
+				s.pack();
+				s.write(fname);
+				break;
+				
+		case 2: cout<<"Enter the file name to delete values from: ";
+				cin>>fname;
+				cout<<"Enter the USN of the record to delete: ";
+				cin>>key;
+				i=s.del(key,fname);
+				if(i==1)
+					cout<<"Deletion successful\n";
+				else
+					cout<<"Deletion error\n";
+				break;
+				
+		case 3: cout<<"Enter the file name in which record modification operation must be perfromed: ";
+				cin>>fname;
+				cout<<"Enter the existing USN value of a record to be modified: ";
+				cin>>key;
+				s.modify(key,fname);
+				break; 
+				
+		case 4: cout<<"Enter the file name to search records from: ";
+				cin>>fname;
+				cout<<"Enter the USN of the record to search for: ";
+				cin>>key;
+				i=s.search(key,fname);
+				break; 
+		
+		default: cout<<"Wrong choice!";
 	}
 	return 0;
 }
