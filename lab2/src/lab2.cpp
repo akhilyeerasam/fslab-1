@@ -16,7 +16,7 @@ using namespace std;
 class student
 {
 	public: int semester;
-		string buffer,usn,branch,name;
+		string buffer,usn,branch,name,sem;
 			
 		void read();
 		void pack();
