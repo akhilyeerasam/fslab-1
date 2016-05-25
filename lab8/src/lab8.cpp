@@ -92,6 +92,10 @@ string namedlist::merge(vector<string> fname,int left,int right)
 			of<<buffer2<<"\n";
 			getline(f2,buffer2);
 		}
+		if(!buffer1.empty())
+			of<<buffer1<<"\n";
+		if(!buffer2.empty())
+			of<<buffer2<<"\n";
 		f1.close();
 		f2.close();
 		of.close();
